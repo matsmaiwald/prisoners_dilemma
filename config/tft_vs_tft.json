@@ -1,0 +1,6 @@
+{
+    "policy_player_1": "TitForTatPolicy",
+    "policy_player_1_kwargs": {},
+    "policy_player_2": "TitForTatPolicy",
+    "policy_player_2_kwargs": {}
+}

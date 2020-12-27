@@ -1,0 +1,10 @@
+{
+    "policy_player_1": "ProbabilisticPolicy",
+    "policy_player_1_kwargs": {
+        "p_defect": 0.5
+    },
+    "policy_player_2": "ProbabilisticPolicy",
+    "policy_player_2_kwargs": {
+        "p_defect": 0.5
+    }
+}

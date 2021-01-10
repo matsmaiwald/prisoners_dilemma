@@ -46,7 +46,7 @@ class GeneralPolicy(PDPolicy):
     _action_mapping: Dict[str, int]
 
     def __init__(self, length_lookback: int):
-        self.length_lookback = length_lookback
+        self.length_lookback = int(length_lookback)
         self._initialise_random()
 
     def _initialise_random(self):
@@ -54,7 +54,7 @@ class GeneralPolicy(PDPolicy):
         keys = [
             "".join(seq) for seq in itertools.product("01", repeat=self.length_lookback)
         ]
-        values = [str(random.randint(0, 1)) for i in range(1, len(keys))]
+        values = [str(random.randint(0, 1)) for i in range(len(keys))]
         self._action_mapping = dict(zip(keys, values))
 
     def _decode_action(self, action: str) -> str:
@@ -66,17 +66,19 @@ class GeneralPolicy(PDPolicy):
         return mapping[action]
 
     def _handle_missing_history(
-        self, last_moves_opponent: List[str], replacement_value: str = "coop"
+        self, last_moves_opponent: List[str], replacement_value: str
     ) -> List[str]:
         n_missing_entries = self.length_lookback - len(last_moves_opponent)
-        for i in range(1, n_missing_entries):
-            last_moves_opponent.insert("coop")
+        for i in range(n_missing_entries):
+            last_moves_opponent.insert(0, "coop")
         return last_moves_opponent
 
     def get_action(self, last_moves_opponent: List[str]) -> str:
         """Get action, given the past moves of the opponent."""
         if len(last_moves_opponent) < self.length_lookback:
-            self._handle_missing_history(last_moves_opponent)
+            self._handle_missing_history(
+                last_moves_opponent=last_moves_opponent, replacement_value="coop"
+            )
         # filter to lookback length
         last_moves_opponent_relevant = last_moves_opponent[
             -self.length_lookback :  # noqa: E203

@@ -47,26 +47,38 @@ class GeneralPolicy(PDPolicy):
 
     def __init__(self, length_lookback: int):
         self.length_lookback = length_lookback
-        self.initialise_random()
+        self._initialise_random()
 
-    def initialise_random(self):
+    def _initialise_random(self):
         """Initialise policy to random mapping."""
         keys = [
             "".join(seq) for seq in itertools.product("01", repeat=self.length_lookback)
         ]
-        values = [1 for i in range(1, len(keys))]
+        values = [str(random.randint(0, 1)) for i in range(1, len(keys))]
         self._action_mapping = dict(zip(keys, values))
 
-    def get_action(self, past_moves_opponent: List[int]) -> str:
+    def _decode_action(self, action: str) -> str:
+        mapping = {"coop": "1", "defect": "0"}
+        return mapping[action]
+
+    def _encode_action(self, action: str) -> str:
+        mapping = {"1": "coop", "0": "defect"}
+        return mapping[action]
+
+    def get_action(self, past_moves_opponent: List[str]) -> str:
         """Get action, given the past moves of the opponent."""
-        past_moves_opponent_str = list(map(str, past_moves_opponent))
-        return self._action_mapping["".join(past_moves_opponent_str)]
+        past_moves_opponent_decoded = list(
+            map(self._decode_action, past_moves_opponent)
+        )
+        action_decoded = self._action_mapping["".join(past_moves_opponent_decoded)]
+
+        return self._encode_action(action_decoded)
 
 
 def test_general_policy():
-    my_policy = GeneralPolicy(length_lookback=5)
+    my_policy = GeneralPolicy(length_lookback=3)
     print(my_policy._action_mapping)
-    print(my_policy.get_action([1, 1, 0, 0, 0]))
+    print(my_policy.get_action(["coop", "coop", "defect"]))
 
 
 if __name__ == "__main__":

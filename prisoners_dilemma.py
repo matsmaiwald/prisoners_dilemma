@@ -3,6 +3,7 @@ from pydantic import BaseModel
 from typing import Optional, Dict
 from policies import PDPolicy
 from importlib import import_module
+from typing import List, Union
 
 
 class Player:
@@ -13,8 +14,8 @@ class Player:
         self.policy = policy
         self.score = 0
 
-    def get_action(self, last_move_opponent: str):
-        return self.policy.action(last_move_opponent=last_move_opponent)
+    def get_action(self, last_moves_opponent: List[str]):
+        return self.policy.get_action(last_moves_opponent=last_moves_opponent)
 
 
 class PayoffMatrix:
@@ -41,19 +42,18 @@ class Game:
     previous_actions = dict()
 
     def __init__(self):
-        self.previous_actions = {"player_1": "coop", "player_2": "coop"}
+        self.previous_actions = {"player_1": [], "player_2": []}
 
     def play_round(self):
         action_player_1 = self.player_1.get_action(
-            last_move_opponent=self.previous_actions["player_2"]
+            last_moves_opponent=self.previous_actions["player_2"]
         )
         action_player_2 = self.player_2.get_action(
-            last_move_opponent=self.previous_actions["player_1"]
+            last_moves_opponent=self.previous_actions["player_1"]
         )
-        self.previous_actions = {
-            "player_1": action_player_1,
-            "player_2": action_player_2,
-        }
+        self.previous_actions["player_1"].append(action_player_1)
+        self.previous_actions["player_2"].append(action_player_2)
+
         payoffs = self.payoff_matrix.get_payoffs(action_player_1, action_player_2)
         self.player_1.score += payoffs["player_1"]
         self.player_2.score += payoffs["player_2"]
@@ -68,9 +68,9 @@ class Game:
 
 class PDConfig(BaseModel):
     policy_player_1: str
-    policy_player_1_kwargs: Optional[Dict[str, float]]
+    policy_player_1_kwargs: Optional[Dict[str, Union[float, int]]]
     policy_player_2: str
-    policy_player_2_kwargs: Optional[Dict[str, float]]
+    policy_player_2_kwargs: Optional[Dict[str, Union[float, int]]]
 
 
 def main():

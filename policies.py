@@ -65,12 +65,26 @@ class GeneralPolicy(PDPolicy):
         mapping = {"1": "coop", "0": "defect"}
         return mapping[action]
 
-    def get_action(self, past_moves_opponent: List[str]) -> str:
+    def _handle_missing_history(
+        self, last_moves_opponent: List[str], replacement_value: str = "coop"
+    ) -> List[str]:
+        n_missing_entries = self.length_lookback - len(last_moves_opponent)
+        for i in range(1, n_missing_entries):
+            last_moves_opponent.insert("coop")
+        return last_moves_opponent
+
+    def get_action(self, last_moves_opponent: List[str]) -> str:
         """Get action, given the past moves of the opponent."""
-        past_moves_opponent_decoded = list(
-            map(self._decode_action, past_moves_opponent)
+        if len(last_moves_opponent) < self.length_lookback:
+            self._handle_missing_history(last_moves_opponent)
+        # filter to lookback length
+        last_moves_opponent_relevant = last_moves_opponent[
+            -self.length_lookback :  # noqa: E203
+        ]
+        last_moves_opponent_decoded = list(
+            map(self._decode_action, last_moves_opponent_relevant)
         )
-        action_decoded = self._action_mapping["".join(past_moves_opponent_decoded)]
+        action_decoded = self._action_mapping["".join(last_moves_opponent_decoded)]
 
         return self._encode_action(action_decoded)
 

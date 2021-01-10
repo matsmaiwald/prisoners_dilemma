@@ -1,0 +1,8 @@
+{
+    "policy_player_1": "GeneralPolicy",
+    "policy_player_1_kwargs": {
+        "length_lookback": 5
+    },
+    "policy_player_2": "TitForTatPolicy",
+    "policy_player_2_kwargs": {}
+}

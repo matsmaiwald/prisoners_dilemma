@@ -1,4 +1,6 @@
 from abc import ABC
+from typing import Dict, List
+import itertools
 
 import random
 
@@ -31,3 +33,41 @@ class ProbabilisticPolicy(PDPolicy):
 class TitForTatPolicy(PDPolicy):
     def action(self, last_move_opponent: str):
         return "defect" if last_move_opponent == "defect" else "coop"
+
+
+class GeneralPolicy(PDPolicy):
+    """
+    General Policy class.
+
+    Note: For ease of implementation, coop: 1, defec: 0.
+    """
+
+    length_lookback: int
+    _action_mapping: Dict[str, int]
+
+    def __init__(self, length_lookback: int):
+        self.length_lookback = length_lookback
+        self.initialise_random()
+
+    def initialise_random(self):
+        """Initialise policy to random mapping."""
+        keys = [
+            "".join(seq) for seq in itertools.product("01", repeat=self.length_lookback)
+        ]
+        values = [1 for i in range(1, len(keys))]
+        self._action_mapping = dict(zip(keys, values))
+
+    def get_action(self, past_moves_opponent: List[int]) -> str:
+        """Get action, given the past moves of the opponent."""
+        past_moves_opponent_str = list(map(str, past_moves_opponent))
+        return self._action_mapping["".join(past_moves_opponent_str)]
+
+
+def test_general_policy():
+    my_policy = GeneralPolicy(length_lookback=5)
+    print(my_policy._action_mapping)
+    print(my_policy.get_action([1, 1, 0, 0, 0]))
+
+
+if __name__ == "__main__":
+    test_general_policy()

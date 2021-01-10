@@ -32,7 +32,10 @@ class ProbabilisticPolicy(PDPolicy):
 
 class TitForTatPolicy(PDPolicy):
     def get_action(self, last_moves_opponent: List[str]):
-        return "defect" if last_moves_opponent[-1] == "defect" else "coop"
+        if last_moves_opponent == []:
+            return "coop"
+        else:
+            return "defect" if last_moves_opponent[-1] == "defect" else "coop"
 
 
 class GeneralPolicy(PDPolicy):

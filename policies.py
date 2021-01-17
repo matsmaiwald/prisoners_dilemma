@@ -6,21 +6,30 @@ import random
 
 
 class PDPolicy(ABC):
+    """Base class defining interface of all policies."""
+
     def get_action(self, last_moves_opponent: List[str]):
+        """Return action as response to opponent's last moves."""
         raise NotImplementedError
 
 
 class AlwaysCoopPolicy(PDPolicy):
+    """Will always cooperate."""
+
     def get_action(self, last_moves_opponent: List[str]):
         return "coop"
 
 
 class AlwaysDefectPolicy(PDPolicy):
+    """Will always defect."""
+
     def get_action(self, last_moves_opponent: List[str]):
         return "defect"
 
 
 class ProbabilisticPolicy(PDPolicy):
+    """test docstring"""
+
     p_defect: float
 
     def __init__(self, p_defect: float):
@@ -31,6 +40,8 @@ class ProbabilisticPolicy(PDPolicy):
 
 
 class TitForTatPolicy(PDPolicy):
+    """Defect if opponent defected last turn, cooperate otherwise."""
+
     def get_action(self, last_moves_opponent: List[str]):
         if last_moves_opponent == []:
             return "coop"

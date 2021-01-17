@@ -4,5 +4,6 @@
         "length_lookback": 5
     },
     "policy_player_2": "TitForTatPolicy",
-    "policy_player_2_kwargs": {}
+    "policy_player_2_kwargs": {},
+    "n_rounds": 10000
 }

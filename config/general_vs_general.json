@@ -6,5 +6,6 @@
     "policy_player_2": "GeneralPolicy",
     "policy_player_2_kwargs": {
         "length_lookback": 5
-    }
+    },
+    "n_rounds": 10000
 }

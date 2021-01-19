@@ -175,17 +175,19 @@ class EvolutionTournament:
             )
             self.players.append(player)
 
+    def _run_match(self, player_1: Player, player_2: Player):
+        my_game = Game(
+            players=[player_1, player_2], payoff_matrix=self.config.payoff_matrix,
+        )
+
+        for i in range(1, self.config.n_rounds):
+            my_game.play_round()
+
     def _run_stage(self):
         j = 0
         while j < len(self.players) - 1:
+            self._run_match(player_1=self.players[j], player_2=self.players[j + 1])
 
-            my_game = Game(
-                players=[self.players[j], self.players[j + 1]],
-                payoff_matrix=self.config.payoff_matrix,
-            )
-
-            for i in range(1, self.config.n_rounds):
-                my_game.play_round()
             j = j + 2
         average_score = self._get_average_score()
         if len(self.players) > 1:

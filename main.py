@@ -4,6 +4,7 @@ from typing import Optional, Dict
 from policies import PDPolicy
 from importlib import import_module
 from typing import List, Union
+import random
 
 
 class Player:
@@ -69,8 +70,8 @@ class Game:
         self.previous_actions["player_2"].append(action_player_2)
 
         payoffs = self.payoff_matrix.get_payoffs(action_player_1, action_player_2)
-        self.player_1.score += payoffs["player_1"]
-        self.player_2.score += payoffs["player_2"]
+        self.player_1.score += payoffs["player_1"] + random.uniform(-1e-10, 1e-10)
+        self.player_2.score += payoffs["player_2"] + random.uniform(-1e-10, 1e-10)
 
         print(f"Player 1 plays: {action_player_1}")
         print(f"Player 2 plays: {action_player_2}")
@@ -108,7 +109,7 @@ def main_ko():
 
     # config = PDConfig.parse_file(args.config_path)
     n_players = 1024
-    n_rounds = 20
+    n_rounds = 50
     length_lookback = 2
     players = list()
     for i in range(0, n_players):
@@ -141,51 +142,82 @@ def main_ko():
     print(players[0].policy._action_mapping)
 
 
-def main_survival():
-    # import argparse
+class TournamnetConfig(BaseModel):
+    n_players: int
+    n_rounds: int
+    length_lookback: int
+    payoff_matrix: PayoffMatrix
 
-    # parser = argparse.ArgumentParser()
-    # parser.add_argument("--config_path")
-    # args = parser.parse_args()
+    class Config:
+        arbitrary_types_allowed = True
 
-    def get_average_score(players):
+
+class EvolutionTournament:
+    config: TournamnetConfig
+    players: List[Player]
+
+    def __init__(self, config: TournamnetConfig):
+        self.config = config
+        self._initialise()
+
+    def _get_average_score(self):
         cum_sum = 0
-        for player in players:
+        for player in self.players:
             cum_sum += player.score
-        return cum_sum / len(players)
+        return cum_sum / len(self.players)
 
+    def _initialise(self):
+        self.players = []
+        for i in range(0, self.config.n_players):
+            player = create_player(
+                "GeneralPolicy",
+                policy_kwargs={"length_lookback": self.config.length_lookback},
+            )
+            self.players.append(player)
+
+    def _run_stage(self):
+        j = 0
+        while j < len(self.players) - 1:
+
+            my_game = Game(
+                players=[self.players[j], self.players[j + 1]],
+                payoff_matrix=self.config.payoff_matrix,
+            )
+
+            for i in range(1, self.config.n_rounds):
+                my_game.play_round()
+            j = j + 2
+        average_score = self._get_average_score()
+        if len(self.players) > 1:
+            print(f"Number of players still in game: {len(self.players)}")
+            self.players = [
+                player for player in self.players if player.score > average_score
+            ]
+
+    def run_tournament(self):
+        k = 0
+        while k < self.config.n_players // 2 and len(self.players) > 1:
+            self._run_stage()
+        print("The tournament is over!")
+        print("The winning player's strategy is:")
+        print(self.players[0].policy._action_mapping)
+
+
+def main_survival():
     # config = PDConfig.parse_file(args.config_path)
     n_players = 512
     n_rounds = 50
     length_lookback = 2
-    players = list()
-    for i in range(0, n_players):
-        player = create_player(
-            "GeneralPolicy", policy_kwargs={"length_lookback": length_lookback}
-        )
-        players.append(player)
-
     payoff_matrix = PayoffMatrix()
 
-    k = 0
-    while k < n_players // 2 and len(players) > 1:
-        j = 0
-        while j < len(players) - 1:
-
-            my_game = Game(
-                players=[players[j], players[j + 1]], payoff_matrix=payoff_matrix
-            )
-
-            for i in range(1, n_rounds):
-                my_game.play_round()
-            j = j + 2
-        average_score = get_average_score(players)
-        if len(players) > 1:
-            print(f"Number of players still in game: {len(players)}")
-            players = [player for player in players if player.score > average_score]
-    print("The tournament is over!")
-    print("The winning player's strategy is:")
-    print(players[0].policy._action_mapping)
+    torunament_config = TournamnetConfig(
+        n_players=n_players,
+        n_rounds=n_rounds,
+        length_lookback=length_lookback,
+        payoff_matrix=payoff_matrix,
+    )
+    tournament = EvolutionTournament(config=torunament_config)
+    tournament.run_tournament()
 
 
 if __name__ == "__main__":

@@ -6,6 +6,12 @@
 Welcome to PrisonersDilemma's documentation!
 ============================================
 
+PrisonersDilemma is a simple package to run tournaments in which agents play repeated games
+of prisoners_dilemma against each other. After each round, players are ranked by their score for
+the round and the bottom half of players are eliminated.
+
+To understand how the package works in detail, check out the docs below.
+
 .. toctree::
    :maxdepth: 2
    :caption: Contents:

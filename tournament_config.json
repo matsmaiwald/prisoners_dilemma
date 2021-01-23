@@ -1,0 +1,23 @@
+{
+    "n_players": 512,
+    "n_rounds": 50,
+    "length_lookback": 2,
+    "payoff_mapping": {
+        "coop_coop": [
+            4,
+            4
+        ],
+        "coop_defect": [
+            -3,
+            5
+        ],
+        "defect_coop": [
+            5,
+            -3
+        ],
+        "defect_defect": [
+            -2,
+            -2
+        ]
+    }
+}

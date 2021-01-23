@@ -49,9 +49,9 @@ class TitForTatPolicy(PDPolicy):
             return "defect" if last_moves_opponent[-1] == "defect" else "coop"
 
 
-class GeneralPolicy(PDPolicy):
+class RandomStaticPolicy(PDPolicy):
     """
-    General Policy class.
+    General random static policy class.
 
     Note: For ease of implementation, coop: 1, defec: 0.
     """
@@ -82,6 +82,8 @@ class GeneralPolicy(PDPolicy):
     def _handle_missing_history(
         self, last_moves_opponent: List[str], replacement_value: str
     ) -> List[str]:
+        """In case number of rounds played is smaller than lookback length,
+        assume that opponent cooperated in the missing rounds."""
         n_missing_entries = self.length_lookback - len(last_moves_opponent)
         for i in range(n_missing_entries):
             last_moves_opponent.insert(0, "coop")
@@ -104,12 +106,3 @@ class GeneralPolicy(PDPolicy):
 
         return self._encode_action(action_decoded)
 
-
-def test_general_policy():
-    my_policy = GeneralPolicy(length_lookback=3)
-    print(my_policy._action_mapping)
-    print(my_policy.get_action(["coop", "coop", "defect"]))
-
-
-if __name__ == "__main__":
-    test_general_policy()

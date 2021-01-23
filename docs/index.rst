@@ -11,12 +11,17 @@ Welcome to PrisonersDilemma's documentation!
    :caption: Contents:
 
 
-policies
-===================
-.. automodule:: policies
+evolution_tournament
+====================
+.. automodule:: prisoners_dilemma.evolution_tournament
    :members:
 
-main
+game
 =====================
-.. automodule:: main
+.. automodule:: prisoners_dilemma.game
+   :members:
+
+policies
+=====================
+.. automodule:: prisoners_dilemma.policies
    :members:

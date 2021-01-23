@@ -1,5 +1,5 @@
 """Module with classes necessary to play a (repeated) prisoners' dilemma."""
-from policies import PDPolicy
+from prisoners_dilemma.policies import PDPolicy
 from typing import List
 import random
 

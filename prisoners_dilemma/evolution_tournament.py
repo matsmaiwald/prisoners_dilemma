@@ -2,7 +2,7 @@
 from pydantic import BaseModel
 from importlib import import_module
 from typing import List, Dict
-from game import Player, PayoffMatrix, Game
+from prisoners_dilemma.game import Player, PayoffMatrix, Game
 
 
 class TournamentConfig(BaseModel):
@@ -31,7 +31,7 @@ class EvolutionTournament:
     def _initialise(self):
         def create_player(policy_name: str, policy_kwargs: dict) -> Player:
 
-            policies_module = import_module("policies")
+            policies_module = import_module("prisoners_dilemma.policies")
             policy_class = getattr(policies_module, policy_name)
 
             player = Player(policy=policy_class(**policy_kwargs))

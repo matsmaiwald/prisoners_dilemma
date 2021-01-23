@@ -1,9 +1,9 @@
 """Script to run evolutionary prisoners dilemma tournament."""
-from evolution_tournament import TournamentConfig, EvolutionTournament
+from prisoners_dilemma.evolution_tournament import TournamentConfig, EvolutionTournament
 
 
 def main():
-    tournament_config = TournamentConfig.parse_file("./tournament_config.json")
+    tournament_config = TournamentConfig.parse_file("./config/tournament_config.json")
     tournament = EvolutionTournament(config=tournament_config)
     tournament.run_tournament()
 

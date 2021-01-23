@@ -1,16 +1,8 @@
+"""Module with classes to run a evolutionary prisoners' dilemma tournament."""
 from pydantic import BaseModel
 from importlib import import_module
 from typing import List, Dict
 from game import Player, PayoffMatrix, Game
-
-
-def create_player(policy_name: str, policy_kwargs: dict) -> Player:
-
-    policies_module = import_module("policies")
-    policy_class = getattr(policies_module, policy_name)
-
-    player = Player(policy=policy_class(**policy_kwargs))
-    return player
 
 
 class TournamentConfig(BaseModel):
@@ -37,10 +29,18 @@ class EvolutionTournament:
         return cum_sum / len(self.players)
 
     def _initialise(self):
+        def create_player(policy_name: str, policy_kwargs: dict) -> Player:
+
+            policies_module = import_module("policies")
+            policy_class = getattr(policies_module, policy_name)
+
+            player = Player(policy=policy_class(**policy_kwargs))
+            return player
+
         self.players = []
         for i in range(0, self.config.n_players):
             player = create_player(
-                "GeneralPolicy",
+                "RandomStaticPolicy",
                 policy_kwargs={"length_lookback": self.config.length_lookback},
             )
             self.players.append(player)
@@ -65,9 +65,11 @@ class EvolutionTournament:
             ]
 
     def run_tournament(self):
+        """Run """
         k = 0
         while k < self.config.n_players // 2 and len(self.players) > 1:
             self._run_stage()
+        print("---" * 10)
         print("The tournament is over!")
         print("The winning player's strategy is:")
         print(self.players[0].policy._action_mapping)

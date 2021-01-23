@@ -1,10 +1,11 @@
+"""Module with classes necessary to play a (repeated) prisoners' dilemma."""
 from policies import PDPolicy
 from typing import List
 import random
 
 
 class Player:
-    """Basic player class, has policy and score."""
+    """Player class, has policy and keeps score."""
 
     policy: PDPolicy
     score: float

@@ -1,3 +1,4 @@
+"""Script to run evolutionary prisoners dilemma tournament."""
 from evolution_tournament import TournamentConfig, EvolutionTournament
 
 

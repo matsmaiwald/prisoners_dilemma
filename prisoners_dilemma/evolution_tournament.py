@@ -6,6 +6,8 @@ from prisoners_dilemma.game import Player, PayoffMatrix, Game
 
 
 class TournamentConfig(BaseModel):
+    """Config required by the EvolutionTournament class."""
+
     n_players: int
     n_rounds: int
     length_lookback: int
@@ -13,6 +15,8 @@ class TournamentConfig(BaseModel):
 
 
 class EvolutionTournament:
+    """Object to run a evolution tournament."""
+
     config: TournamentConfig
     payoff_matrix: PayoffMatrix
     players: List[Player]
@@ -65,7 +69,7 @@ class EvolutionTournament:
             ]
 
     def run_tournament(self):
-        """Run """
+        """Run a tournament."""
         k = 0
         while k < self.config.n_players // 2 and len(self.players) > 1:
             self._run_stage()

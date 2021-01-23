@@ -6,4 +6,4 @@
 
 
 # Docs
-Check out our documentation [here](docs)
+Check out our documentation at readthedocs [here](https://prisoners-dilemma.readthedocs.io/en/latest/).
